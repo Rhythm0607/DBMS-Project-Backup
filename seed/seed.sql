@@ -21,7 +21,6 @@ INSERT INTO accounts (customer_id, branch_id, account_number, balance, account_t
 (5, 2, 'ACC0000000005', 10000.00, 'current', 'INR');
 
 INSERT INTO transactions (account_id, tx_type, amount, balance_after, related_account, description) VALUES
-INSERT INTO transactions (account_id, tx_type, amount, balance_after, related_account, description) VALUES
 -- Account 1 at 0, deposits 25k
 (1, 'DEPOSIT', 25000.00, 25000.00, NULL, 'Initial account funding'),
 -- Withdrawa
