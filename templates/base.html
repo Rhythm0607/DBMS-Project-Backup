@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BankBase{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>BankBase</h1>
+            </div>
+            
+            {% if session.get('user_type') %}
+            <div class="nav-menu">
+                {% if session.get('user_type') == 'customer' %}
+                    <a href="/customer/dashboard" class="nav-link">Dashboard</a>
+                    <a href="/customer/transactions" class="nav-link">Transactions</a>
+                    <a href="/customer/transfer" class="nav-link">Transfer</a>
+                    <a href="/customer/loans" class="nav-link">Loans</a>
+                    <a href="/customer/cards" class="nav-link">Cards</a>
+                {% elif session.get('user_type') == 'employee' %}
+                    <a href="/employee/dashboard" class="nav-link">Dashboard</a>
+                    <a href="/employee/search" class="nav-link">Customers</a>
+                    <a href="/employee/loans" class="nav-link">Loans</a>
+                    <a href="/employee/reports" class="nav-link">Reports</a>
+                {% endif %}
+                
+                <div class="nav-user">
+                    <span class="user-name">{{ session.get('user_name', 'User') }}</span>
+                    <a href="/logout" class="btn-secondary btn-small">Logout</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2026 BankBase. A DBMS Project.</p>
+            <p>Built with Flask & PostgreSQL</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

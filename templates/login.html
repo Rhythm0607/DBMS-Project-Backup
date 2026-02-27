@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Login - BankBase{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Welcome to BankBase</h2>
+            <p class="text-muted">Secure Banking Portal</p>
+        </div>
+
+        <!-- Login Type Tabs -->
+        <div class="login-tabs">
+            <div class="login-tab active" id="customerTab" onclick="switchTab('customer')">
+                Customer Login
+            </div>
+            <div class="login-tab" id="employeeTab" onclick="switchTab('employee')">
+                Employee Login
+            </div>
+        </div>
+
+        <!-- Customer Login Form -->
+        <form method="POST" action="/customer/login" id="customerForm">
+            <div class="form-group">
+                <label class="form-label" for="customer_mobile">Mobile Number</label>
+                <input 
+                    type="text" 
+                    id="customer_mobile" 
+                    name="mobile" 
+                    class="form-input" 
+                    placeholder="Enter your mobile number"
+                    required
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                >
+                <div class="form-helper">Enter your registered 10-digit mobile number</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="customer_password">Password</label>
+                <input 
+                    type="password" 
+                    id="customer_password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="customerLoginBtn">
+                Login as Customer
+            </button>
+        </form>
+
+        <!-- Employee Login Form -->
+        <form method="POST" action="/employee/login" id="employeeForm" class="hidden">
+            <div class="form-group">
+                <label class="form-label" for="employee_id">Employee ID</label>
+                <input 
+                    type="text" 
+                    id="employee_id" 
+                    name="employee_id" 
+                    class="form-input" 
+                    placeholder="Enter your employee ID"
+                    required
+                >
+                <div class="form-helper">Enter your assigned employee ID</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="employee_password">Password</label>
+                <input 
+                    type="password" 
+                    id="employee_password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="employeeLoginBtn">
+                Login as Employee
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <p class="text-muted" style="font-size: 0.875rem;">
+                <strong>Demo Credentials:</strong><br>
+                Customer: 9876543210 / password123<br>
+                Employee: 1 / admin123
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function switchTab(type) {
+        const customerTab = document.getElementById('customerTab');
+        const employeeTab = document.getElementById('employeeTab');
+        const customerForm = document.getElementById('customerForm');
+        const employeeForm = document.getElementById('employeeForm');
+
+        if (type === 'customer') {
+            customerTab.classList.add('active');
+            employeeTab.classList.remove('active');
+            customerForm.classList.remove('hidden');
+            employeeForm.classList.add('hidden');
+        } else {
+            employeeTab.classList.add('active');
+            customerTab.classList.remove('active');
+            employeeForm.classList.remove('hidden');
+            customerForm.classList.add('hidden');
+        }
+    }
+
+    // Handle form submissions with loading state
+    document.addEventListener('DOMContentLoaded', function() {
+        bankbaseUtils.handleFormSubmit('customerForm', 'customerLoginBtn');
+        bankbaseUtils.handleFormSubmit('employeeForm', 'employeeLoginBtn');
+    });
+</script>
+{% endblock %}
