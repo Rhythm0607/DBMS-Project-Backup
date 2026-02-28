@@ -209,37 +209,40 @@ def request_loan(
     next_id = next_row["next_id"]
     loan_number = f"LN{int(next_id):010d}"
 
-    row = fetch_one(
-        """
-        INSERT INTO loans (
-            customer_id,
-            branch_id,
-            linked_account_id,
-            loan_number,
-            loan_type,
-            principal_amount,
-            interest_rate,
-            tenure_months,
-            emi_amount,
-            outstanding_balance,
-            status
+    # Use an explicit transaction with commit so the new loan persists
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO loans (
+                customer_id,
+                branch_id,
+                linked_account_id,
+                loan_number,
+                loan_type,
+                principal_amount,
+                interest_rate,
+                tenure_months,
+                emi_amount,
+                outstanding_balance,
+                status
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'PENDING')
+            RETURNING *
+            """,
+            (
+                customer_id,
+                account["branch_id"],
+                account_id,
+                loan_number,
+                loan_type,
+                principal,
+                interest_rate,
+                tenure_months,
+                emi_amount,
+                principal,
+            ),
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'PENDING')
-        RETURNING *
-        """,
-        (
-            customer_id,
-            account["branch_id"],
-            account_id,
-            loan_number,
-            loan_type,
-            principal,
-            interest_rate,
-            tenure_months,
-            emi_amount,
-            principal,
-        ),
-    )
+        row = cur.fetchone()
 
     if not row:
         return False, "Could not create loan request."

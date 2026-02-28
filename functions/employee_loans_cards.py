@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 import random
 
 from db import fetch_one, fetch_all, execute, get_cursor
+from . import db_helpers
 
 
 def get_pending_loans(branch_id: int) -> List[Dict[str, Any]]:
@@ -62,18 +63,66 @@ def get_all_loans(branch_id: int, status_filter: Optional[str] = None) -> List[D
 
 def approve_loan(loan_id: int, employee_id: int) -> None:
     """
-    (18) Mark a loan as approved and associate approving employee.
+    (18) Approve a loan and disburse funds to the linked account.
     """
-    execute(
-        """
-        UPDATE loans
-        SET status = 'APPROVED',
-            employee_id = %s,
-            disbursement_date = CURRENT_DATE
-        WHERE loan_id = %s
-        """,
-        (employee_id, loan_id),
-    )
+    with get_cursor(commit=True) as cur:
+        # Lock the loan row
+        cur.execute(
+            "SELECT * FROM loans WHERE loan_id = %s FOR UPDATE",
+            (loan_id,),
+        )
+        loan = cur.fetchone()
+        if not loan:
+            return
+
+        # Lock the linked account
+        account_id = loan["linked_account_id"]
+        cur.execute(
+            "SELECT balance FROM accounts WHERE account_id = %s FOR UPDATE",
+            (account_id,),
+        )
+        account = cur.fetchone()
+        if not account:
+            return
+
+        current_balance = account["balance"]
+        principal = loan["principal_amount"]
+        new_balance = current_balance + principal
+
+        # Update account balance
+        cur.execute(
+            "UPDATE accounts SET balance = %s WHERE account_id = %s",
+            (new_balance, account_id),
+        )
+
+        # Insert a transaction for loan disbursement
+        cur.execute(
+            """
+            INSERT INTO transactions (
+                account_id, tx_type, amount, balance_after, related_account, description
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (
+                account_id,
+                "CREDIT",
+                principal,
+                new_balance,
+                None,
+                f"Loan disbursement #{loan['loan_number']}",
+            ),
+        )
+
+        # Mark loan as ACTIVE and set employee / disbursement date
+        cur.execute(
+            """
+            UPDATE loans
+            SET status = 'ACTIVE',
+                employee_id = %s,
+                disbursement_date = CURRENT_DATE
+            WHERE loan_id = %s
+            """,
+            (employee_id, loan_id),
+        )
 
 
 def reject_loan(loan_id: int, employee_id: int) -> None:
