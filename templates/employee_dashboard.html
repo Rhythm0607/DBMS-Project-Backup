@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Dashboard - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Branch Overview</h2>
+        <p class="card-subtitle">
+            {{ summary.branch.branch_name if summary.branch else 'Branch' }}
+            (ID: {{ summary.branch.branch_id if summary.branch else 'N/A' }})
+        </p>
+    </div>
+
+    <div class="grid grid-4">
+        <div class="stat-card">
+            <div class="stat-label">Total Customers</div>
+            <div class="stat-value">{{ summary.totals.total_customers }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Accounts</div>
+            <div class="stat-value">{{ summary.totals.total_accounts }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Branch Balance</div>
+            <div class="stat-value money">{{ summary.totals.total_balance }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active / Pending Loans</div>
+            <div class="stat-value">
+                {{ summary.totals.active_loans }} / {{ summary.totals.pending_loans }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">My Loan Decisions</h3>
+        </div>
+        <p>Approved: <strong>{{ summary.my_loan_actions.approved }}</strong></p>
+        <p>Rejected: <strong>{{ summary.my_loan_actions.rejected }}</strong></p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Recent Customers</h3>
+        </div>
+        {% if summary.recent_customers %}
+        <ul>
+            {% for c in summary.recent_customers %}
+            <li>
+                <a href="{{ url_for('employee_customer_detail', customer_id=c.customer_id) }}">
+                    {{ c.first_name }} {{ c.last_name }}
+                </a>
+                <span class="text-muted">· {{ c.created_at }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No recent customers.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Branch Reports - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Branch Report</h2>
+        <p class="card-subtitle">
+            {{ report.branch.branch_name if report.branch else 'Branch' }}
+            (ID: {{ report.branch.branch_id if report.branch else 'N/A' }})
+        </p>
+    </div>
+
+    <div class="grid grid-3">
+        <div class="stat-card">
+            <div class="stat-label">Total Customers</div>
+            <div class="stat-value">{{ report.total_customers }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Accounts</div>
+            <div class="stat-value">{{ report.total_accounts }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value money">{{ report.total_balance }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-2 mt-2">
+        <div class="stat-card">
+            <div class="stat-label">Active Loans</div>
+            <div class="stat-value">{{ report.active_loans }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pending Loans</div>
+            <div class="stat-value">{{ report.pending_loans }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

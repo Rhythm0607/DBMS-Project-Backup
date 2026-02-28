@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction Monitoring - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Transaction Monitoring</h2>
+        <p class="card-subtitle">View and filter transactions for your branch.</p>
+    </div>
+
+    <form method="get" class="grid grid-3 mb-2">
+        <div class="form-group">
+            <label class="form-label" for="account_id">Account ID</label>
+            <input type="number" id="account_id" name="account_id" class="form-input"
+                   value="{{ filters.account_id or '' }}">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="tx_type">Transaction Type</label>
+            <select id="tx_type" name="tx_type" class="form-select">
+                <option value="">All</option>
+                <option value="DEBIT" {% if filters.tx_type == 'DEBIT' %}selected{% endif %}>Debit</option>
+                <option value="CREDIT" {% if filters.tx_type == 'CREDIT' %}selected{% endif %}>Credit</option>
+                <option value="TRANSFER" {% if filters.tx_type == 'TRANSFER' %}selected{% endif %}>Transfer</option>
+                <option value="WITHDRAWAL" {% if filters.tx_type == 'WITHDRAWAL' %}selected{% endif %}>Withdrawal</option>
+                <option value="DEPOSIT" {% if filters.tx_type == 'DEPOSIT' %}selected{% endif %}>Deposit</option>
+            </select>
+        </div>
+        <div class="form-group" style="align-self: end;">
+            <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+        </div>
+    </form>
+
+    {% if transactions %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tx ID</th>
+                    <th>Date</th>
+                    <th>Account</th>
+                    <th>Type</th>
+                    <th class="text-right">Amount</th>
+                    <th class="text-right">Balance After</th>
+                    <th>Related Account</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td>{{ t.tx_id }}</td>
+                    <td>{{ t.created_at }}</td>
+                    <td>{{ t.account_number }}</td>
+                    <td>{{ t.tx_type }}</td>
+                    <td class="text-right money">{{ t.amount }}</td>
+                    <td class="text-right money">{{ t.balance_after }}</td>
+                    <td>{{ t.related_account }}</td>
+                    <td>{{ t.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No transactions found for the selected filters.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

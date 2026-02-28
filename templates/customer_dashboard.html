@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Dashboard - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Welcome, {{ profile.first_name }} {{ profile.last_name }}</h2>
+        <p class="card-subtitle">Customer ID: {{ profile.customer_id }}</p>
+    </div>
+
+    <div class="grid grid-3">
+        <div class="stat-card">
+            <div class="stat-label">Total Accounts</div>
+            <div class="stat-value">{{ dashboard.total_accounts }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Balance</div>
+            <div class="stat-value money">{{ dashboard.total_balance }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Loans</div>
+            <div class="stat-value">{{ dashboard.active_loans }}</div>
+            <div class="stat-change">{{ dashboard.cards_count }} active cards</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Your Accounts</h3>
+            <p class="card-subtitle">Click an account to view statement or transactions.</p>
+        </div>
+
+        {% if accounts %}
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Account Number</th>
+                        <th>Type</th>
+                        <th>Branch</th>
+                        <th class="text-right">Balance</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in accounts %}
+                    <tr>
+                        <td>{{ a.account_number }}</td>
+                        <td>{{ a.account_type }}</td>
+                        <td>{{ a.branch_name }}</td>
+                        <td class="text-right money">{{ a.balance }}</td>
+                        <td class="text-right">
+                            <a href="{{ url_for('customer_transactions', account_id=a.account_id) }}" class="btn btn-secondary btn-small">Transactions</a>
+                            <a href="{{ url_for('customer_statement', account_id=a.account_id) }}" class="btn btn-primary btn-small">Statement</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No accounts found.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Recent Transactions</h3>
+            <p class="card-subtitle">Last 5 transactions across all your accounts.</p>
+        </div>
+
+        {% if dashboard.recent_transactions %}
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Account</th>
+                        <th>Type</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in dashboard.recent_transactions %}
+                    <tr>
+                        <td>{{ tx.created_at }}</td>
+                        <td>{{ tx.account_number }}</td>
+                        <td>{{ tx.tx_type }}</td>
+                        <td class="text-right money">{{ tx.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No recent transactions.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

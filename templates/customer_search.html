@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Search - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Search Customers</h2>
+        <p class="card-subtitle">Search by name, email, or mobile number.</p>
+    </div>
+
+    <form method="get" class="grid grid-2 mb-2">
+        <div class="form-group">
+            <label class="form-label" for="q">Search Query</label>
+            <input type="text" id="q" name="q" class="form-input" placeholder="Enter name, email, or mobile" value="{{ query }}">
+        </div>
+        <div class="form-group" style="align-self: end;">
+            <button type="submit" class="btn btn-primary btn-block">Search</button>
+        </div>
+    </form>
+
+    {% if customers %}
+    <div class="table-container">
+        <table class="table" id="customerTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Created At</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in customers %}
+                <tr>
+                    <td>{{ c.customer_id }}</td>
+                    <td>{{ c.first_name }} {{ c.last_name }}</td>
+                    <td>{{ c.email }}</td>
+                    <td>{{ c.mobile }}</td>
+                    <td>{{ c.created_at }}</td>
+                    <td class="text-right">
+                        <a href="{{ url_for('employee_customer_detail', customer_id=c.customer_id) }}" class="btn btn-secondary btn-small">
+                            View Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif query %}
+    <p class="text-muted">No customers found for "{{ query }}".</p>
+    {% else %}
+    <p class="text-muted">Enter a query and search to see results.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Details - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">
+            {{ profile.first_name }} {{ profile.last_name }}
+            <span class="text-muted">(#{{ profile.customer_id }})</span>
+        </h2>
+        <p class="card-subtitle">
+            Email: {{ profile.email }} · Mobile: {{ profile.mobile }}
+        </p>
+    </div>
+
+    <div class="grid grid-2">
+        <div>
+            <p><strong>Date of Birth:</strong> {{ profile.dob }}</p>
+            <p><strong>Joined:</strong> {{ profile.created_at }}</p>
+        </div>
+        {% if not readonly %}
+        <div class="text-right">
+            <a href="{{ url_for('employee_search') }}" class="btn btn-secondary btn-small">Back to Search</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Accounts</h3>
+        </div>
+        {% if accounts %}
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Branch</th>
+                        <th class="text-right">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in accounts %}
+                    <tr>
+                        <td>{{ a.account_number }}</td>
+                        <td>{{ a.account_type }}</td>
+                        <td>{{ a.branch_name }}</td>
+                        <td class="text-right money">{{ a.balance }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No accounts.</p>
+        {% endif %}
+
+        {% if not readonly %}
+        <div class="mt-2">
+            <a href="{{ url_for('employee_create_account') }}" class="btn btn-primary btn-small">
+                Create New Account
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Loans & Cards</h3>
+        </div>
+
+        {% if loans %}
+        <h4 class="mt-1">Loans</h4>
+        <ul>
+            {% for l in loans %}
+            <li>
+                #{{ l.loan_number }} — {{ l.loan_type }} —
+                <span class="money">{{ l.outstanding_balance }}</span>
+                ({{ l.status }})
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No loans.</p>
+        {% endif %}
+
+        {% if cards %}
+        <h4 class="mt-2">Cards</h4>
+        <ul>
+            {% for c in cards %}
+            <li>
+                {{ c.card_type }} card {{ c.card_number }} — {{ c.status }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No cards.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

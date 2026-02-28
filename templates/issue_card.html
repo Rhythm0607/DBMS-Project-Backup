@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Issue Card - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Issue New Card</h2>
+        <p class="card-subtitle">Create a new debit/credit card for an account.</p>
+    </div>
+
+    <form method="post" id="issueCardForm">
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="account_id">Account ID</label>
+                <input type="number" id="account_id" name="account_id" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="card_type">Card Type</label>
+                <select id="card_type" name="card_type" class="form-select" required>
+                    <option value="Debit">Debit</option>
+                    <option value="Credit">Credit</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="credit_limit">Credit Limit (for Credit cards)</label>
+                <input type="number" step="0.01" min="0" id="credit_limit" name="credit_limit" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="withdrawal_limit">Withdrawal Limit</label>
+                <input type="number" step="0.01" min="0" id="withdrawal_limit" name="withdrawal_limit" class="form-input">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="issueCardBtn">Issue Card</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        bankbaseUtils.handleFormSubmit('issueCardForm', 'issueCardBtn');
+    });
+</script>
+{% endblock %}
+

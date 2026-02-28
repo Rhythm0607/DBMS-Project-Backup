@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Money Transfer - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Transfer Money</h2>
+        <p class="card-subtitle">Move funds between your accounts or to another account.</p>
+    </div>
+
+    {% if accounts %}
+    <form method="post" id="transferForm">
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="from_account">From Account</label>
+                <select id="from_account" name="from_account" class="form-select" required>
+                    <option value="">Select source account</option>
+                    {% for a in accounts %}
+                    <option value="{{ a.account_id }}">
+                        {{ a.account_number }} ({{ a.account_type }}) - {{ a.branch_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="to_account">To Account (ID)</label>
+                <input type="number" id="to_account" name="to_account" class="form-input" placeholder="Destination account ID" required>
+                <div class="form-helper">For demo, use a valid internal account_id.</div>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="amount">Amount</label>
+                <input type="number" step="0.01" min="0.01" id="amount" name="amount" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="description">Description</label>
+                <input type="text" id="description" name="description" class="form-input" placeholder="e.g. Rent payment">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="transferBtn">Submit Transfer</button>
+    </form>
+    {% else %}
+    <p class="text-muted">You do not have any accounts to transfer from.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        bankbaseUtils.handleFormSubmit('transferForm', 'transferBtn');
+        const amountInput = document.getElementById('amount');
+        if (amountInput) {
+            bankbaseUtils.validateNumberInput(amountInput, 0.01);
+        }
+    });
+</script>
+{% endblock %}
+

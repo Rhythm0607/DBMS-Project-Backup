@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Cards - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Cards</h2>
+        <p class="card-subtitle">All cards linked to your accounts{% if session.get('user_type') == 'employee' %} / branch{% endif %}.</p>
+    </div>
+
+    {% if cards %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Card #</th>
+                    <th>Type</th>
+                    <th>Account</th>
+                    <th>Status</th>
+                    <th>Expiry</th>
+                    <th class="text-right">Credit Limit</th>
+                    <th class="text-right">Withdrawal Limit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in cards %}
+                <tr>
+                    <td>
+                        <span class="text-mono">{{ c.card_number }}</span>
+                    </td>
+                    <td>{{ c.card_type }}</td>
+                    <td>{{ c.account_number or c.account_id }}</td>
+                    <td>{{ c.status }}</td>
+                    <td>{{ c.expiry_date }}</td>
+                    <td class="text-right money">
+                        {% if c.credit_limit %}{{ c.credit_limit }}{% else %}-{% endif %}
+                    </td>
+                    <td class="text-right money">
+                        {% if c.withdrawal_limit %}{{ c.withdrawal_limit }}{% else %}-{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No cards found.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

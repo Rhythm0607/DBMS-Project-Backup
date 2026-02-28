@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Employee Login - BankBase{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Employee Login</h2>
+        <p class="card-subtitle">Use the unified login page.</p>
+    </div>
+    <p>
+        This project uses a combined customer/employee login screen.
+        <a href="{{ url_for('index') }}" class="btn btn-primary mt-2">Go to Login</a>
+    </p>
+</div>
+{% endblock %}
+
